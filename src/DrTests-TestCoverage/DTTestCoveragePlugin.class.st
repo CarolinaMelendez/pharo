@@ -61,6 +61,12 @@ DTTestCoveragePlugin >> itemsToBeAnalysedFor: packagesSelected [
 ]
 
 { #category : #accessing }
+DTTestCoveragePlugin >> pluginPresenterClass [
+	
+	^ DTCoveragePluginPresenter
+]
+
+{ #category : #accessing }
 DTTestCoveragePlugin >> pragmaForResultTrees [
 	^ #'dtTestCoverageResultTreeNamed:order:'
 ]
@@ -76,15 +82,16 @@ DTTestCoveragePlugin >> runForConfiguration: aDTpluginConfiguration [
 	result := self pluginResultClass new.
 	self defineData: aDTpluginConfiguration.
 	suite := self suiteFor: testClasses.
-	collector := CoverageCollector new.
+	collector := DTCoverageCollector new.
 	collector methods: methods.
 	coverage := collector runOn: [ self runTestSuites: {suite} ].
-	notExecuted := coverage uncoveredMethods.
-	notExecuted isEmpty
-		ifTrue: [ result percent: 1s2 ]
-		ifFalse: [ result
-				percent: 1s2 - (notExecuted size / methods size asScaledDecimal: 2);
-				methodList: notExecuted ].
+	
+	notExecuted := coverage partiallyCoveredMethods size + coverage uncoveredMethods size.
+	result percent: 1s2 - (notExecuted / methods size asScaledDecimal: 2);
+			 methodList: collector methods ;
+			 coveredMethods: coverage coveredMethods;
+			 partiallyCoveredMethods: coverage partiallyCoveredMethods;
+			 uncoveredMethods: coverage uncoveredMethods .
 	^ result
 ]
 
