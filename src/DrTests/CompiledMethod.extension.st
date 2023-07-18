@@ -1,6 +1,12 @@
 Extension { #name : #CompiledMethod }
 
 { #category : #'*DrTests' }
+CompiledMethod >> asResultCoverageForDrTest [
+
+	^ DTTestCoverageLeafNode content: self
+]
+
+{ #category : #'*DrTests' }
 CompiledMethod >> asResultForDrTest [
 
 	^ DTTestLeafNode content: self

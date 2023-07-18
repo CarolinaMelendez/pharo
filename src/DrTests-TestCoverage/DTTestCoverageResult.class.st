@@ -28,7 +28,7 @@ DTTestCoverageResult >> buildTreeByClass: aMethodList [
             | classNode |
             classNode := DTTreeNode new
                 name: key asString ;
-                subResults: (value collect: [:each | each asResultForDrTest "asResultCoverageForDrTest" ]);
+                subResults: (value collect: [:each | each asResultCoverageForDrTest]);
                 yourself.
 				subResultsTree := subResultsTree , {classNode}.
     ].

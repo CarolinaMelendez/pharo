@@ -125,22 +125,27 @@ DTCoveragePluginPresenter >> initializeResultsTreeAndLabel [
 
 { #category : #initialization }
 DTCoveragePluginPresenter >> updateSourceCodePanel: compiledMethod [
-
+| statementCoverage |
 yellowNodes := OrderedCollection new.
 uncoveredNodes:= OrderedCollection new.
 coveredNodes:= OrderedCollection new.
 
-self defineColorCoverage: compiledMethod.
+statementCoverage := compiledMethod ast propertyAt: #statementCoverage .
+statementCoverage = '0%' 
+ifTrue: [ uncoveredNodes add: compiledMethod ast   ]
+ifFalse: [ statementCoverage = '100%'
+	        ifTrue: [coveredNodes add: compiledMethod ast    ]
+	        ifFalse: [ self defineColorCoverage: compiledMethod]  ] .
 
 sourceCodePanel beForMethod: compiledMethod.
 sourceCodePanel text: compiledMethod sourceCode.
 
-"uncoveredNodes do: [:node |
+uncoveredNodes do: [:node |
     sourceCodePanel addTextSegmentDecoration: (SpTextPresenterDecorator forHighlight
         interval: (node sourceInterval first to: node sourceInterval last + 1);
 		  highlightColor: (Color r: 0.98 g: 0.71 b: 0.71)
     )
-]."
+].
 yellowNodes do: [:interval |
     sourceCodePanel addTextSegmentDecoration: (SpTextPresenterDecorator forHighlight
         interval: (interval + 1);
